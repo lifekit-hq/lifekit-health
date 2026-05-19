@@ -1,0 +1,44 @@
+{
+  "name": "workout-claw",
+  "version": "0.3.0",
+  "description": "Local-first gym workout tracker CLI for agents and humans",
+  "license": "MIT",
+  "author": "Denys Sychov",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "bin": {
+    "workout-claw": "bin/workout-claw.js"
+  },
+  "files": [
+    "bin/",
+    "dist/",
+    "SKILL.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "tsc && node dist/index.js",
+    "dev": "tsc --watch",
+    "openclaw:sync": "cp SKILL.md ~/.openclaw/workspace/skills/workout-claw/SKILL.md && systemctl --user restart openclaw-gateway.service && echo '✓ SKILL.md synced + gateway restarted'"
+  },
+  "dependencies": {
+    "nanoid": "^5.1.5",
+    "yaml": "^2.7.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.8.2"
+  },
+  "keywords": [
+    "workout",
+    "gym",
+    "fitness",
+    "tracker",
+    "cli",
+    "agent",
+    "openclaw",
+    "lifting",
+    "exercise"
+  ]
+}
