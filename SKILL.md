@@ -31,6 +31,17 @@ triggers:
 
 Local-first gym workout tracker. Plain-JSON storage at `~/.workout-claw/`. Invokable as a CLI by an agent — no MCP server, no daemon.
 
+## Setup
+
+This skill ships a SKILL.md manifest via ClawHub, but the `workout-claw` CLI binary lives on npm. Both layers are required.
+
+```bash
+openclaw skills install workout-claw    # installs this SKILL.md
+npm install -g workout-claw             # installs the CLI binary
+```
+
+Requires Node >= 20. Once both are installed, the CLI is on PATH and other skills can invoke it.
+
 ## When to invoke
 
 User describes a workout session, asks about progress, or wants to see a PR. Examples that should trigger this skill:
