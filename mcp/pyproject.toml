@@ -1,0 +1,20 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "health-claw-mcp"
+version = "0.1.0"
+description = "MCP server wrapping workout-claw and life-state for the lifekit health module"
+requires-python = ">=3.12"
+dependencies = [
+    "mcp[cli]>=1.0.0",
+    "uvicorn>=0.30.0",
+    "pyyaml>=6.0",
+]
+
+[project.scripts]
+health-claw-mcp = "health_claw.mcp_server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/health_claw"]
