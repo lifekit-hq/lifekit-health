@@ -1,7 +1,7 @@
 {
   "name": "workout-claw",
-  "version": "0.3.0",
-  "description": "Local-first gym workout tracker CLI for agents and humans",
+  "version": "0.3.1",
+  "description": "Local-first gym workout tracker CLI for agents and humans. Plain-JSON storage, PR/volume analytics, muscle-group inference.",
   "license": "MIT",
   "author": "Denys Sychov",
   "type": "module",
@@ -14,13 +14,16 @@
   "files": [
     "bin/",
     "dist/",
-    "SKILL.md"
+    "SKILL.md",
+    "README.md"
   ],
   "scripts": {
     "build": "tsc",
     "start": "tsc && node dist/index.js",
     "dev": "tsc --watch",
-    "openclaw:sync": "cp SKILL.md ~/.openclaw/workspace/skills/workout-claw/SKILL.md && systemctl --user restart openclaw-gateway.service && echo '✓ SKILL.md synced + gateway restarted'"
+    "openclaw:sync": "cp SKILL.md ~/.openclaw/workspace/skills/workout-claw/SKILL.md && systemctl --user restart openclaw-gateway.service && echo '\u2713 SKILL.md synced + gateway restarted'",
+    "test": "npm run build && node --test tests/*.test.mjs",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "nanoid": "^5.1.5",
@@ -34,11 +37,18 @@
     "workout",
     "gym",
     "fitness",
-    "tracker",
     "cli",
     "agent",
     "openclaw",
-    "lifting",
-    "exercise"
-  ]
+    "local-first"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dsdevq/lifekit-health.git",
+    "directory": "workout"
+  },
+  "homepage": "https://github.com/dsdevq/lifekit-health/tree/main/workout#readme",
+  "bugs": {
+    "url": "https://github.com/dsdevq/lifekit-health/issues"
+  }
 }

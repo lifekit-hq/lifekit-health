@@ -2,7 +2,8 @@
 name: workout-claw
 description: Log workouts, track progress, compute PRs, edit/delete sessions via a local CLI. Local-first, JSON storage.
 author: Denys Sychov
-version: 0.3.0
+version: 0.3.1
+metadata: {"openclaw":{"requires":{"bins":["workout-claw"]}}}
 triggers:
   - "log workout"
   - "log my workout"
