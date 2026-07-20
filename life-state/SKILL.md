@@ -2,7 +2,8 @@
 name: life-state
 description: Daily mood / energy / soreness / sleep capture primitive. Other lifekit skills read this to make state-aware suggestions instead of generic templates.
 author: Denys Sychov
-version: 0.1.0
+version: 0.2.0
+metadata: {"openclaw":{"requires":{"bins":["life-state"]}}}
 triggers:
   - "how am I feeling"
   - "mood check"
@@ -22,17 +23,6 @@ triggers:
 # life-state
 
 A boring, durable state primitive. NOT a chat experience — it's the integration glue that lets other skills (`morning_brief`, future workout suggester, bedtime brief) adapt to your current state instead of returning the same template every day.
-
-## Setup
-
-This skill ships a SKILL.md manifest via ClawHub, but the `life-state` CLI binary lives on npm. Both layers are required.
-
-```bash
-openclaw skills install life-state    # installs this SKILL.md
-npm install -g life-state             # installs the CLI binary
-```
-
-Requires Node >= 20. Once both are installed, the CLI is on PATH and other skills can invoke it.
 
 ## When to invoke
 
@@ -83,6 +73,8 @@ Returns avg energy, mood histogram, top soreness areas, and per-day rollup.
 ## Data location
 
 `~/.life/state/<date>.json` — one JSON file per day. Stable, known location every other lifekit skill should read from.
+
+Set `LIFE_STATE_DIR` to relocate the store (containers, shared vaults) — the CLI reads it at startup.
 
 Schema:
 ```json

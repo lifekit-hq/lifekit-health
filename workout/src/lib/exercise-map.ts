@@ -26,8 +26,11 @@ const KEYWORDS: Array<[string[], MuscleGroup]> = [
   [['pullup', 'chinup', 'latpulldown', 'pulldown', 'row', 'tbar', 'seatedrow', 'cablerow',
     'barbellrow', 'dbrow', 'dumbbellrow', 'bentover', 'facepull', 'shrug', 'deadlift', 'rdl', 'romanian'], 'back'],
   // CHEST
+  // 'barbellpress'/'bbpress' cover flat barbell press logged without the word
+  // "bench" — a bare 'press' keyword would misroute legpress/shoulderpress.
   [['bench', 'benchpress', 'inclinebench', 'declinebench', 'inclinedb', 'inclinedumbbell',
-    'dbpress', 'dumbbellpress', 'chestpress', 'pushup', 'fly', 'flye', 'flies', 'pecdeck', 'cablefly', 'dip'], 'chest'],
+    'dbpress', 'dumbbellpress', 'chestpress', 'barbellpress', 'bbpress',
+    'pushup', 'fly', 'flye', 'flies', 'pecdeck', 'cablefly', 'dip'], 'chest'],
   // LEGS
   [['squat', 'legpress', 'hacksquat', 'lunge', 'legcurl', 'legextension', 'calf', 'calves',
     'glute', 'hipthrust', 'bulgarian', 'stepup'], 'legs'],

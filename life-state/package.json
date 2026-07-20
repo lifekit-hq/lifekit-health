@@ -1,7 +1,7 @@
 {
   "name": "life-state",
-  "version": "0.1.0",
-  "description": "Daily mood / energy / sleep state primitive for the lifekit ecosystem",
+  "version": "0.2.0",
+  "description": "Daily mood / energy / soreness / sleep capture primitive. Merge-semantics daily store other agent skills read for state-aware suggestions.",
   "license": "MIT",
   "author": "Denys Sychov",
   "type": "module",
@@ -14,13 +14,16 @@
   "files": [
     "bin/",
     "dist/",
-    "SKILL.md"
+    "SKILL.md",
+    "README.md"
   ],
   "scripts": {
     "build": "tsc",
     "start": "tsc && node dist/index.js",
     "dev": "tsc --watch",
-    "openclaw:sync": "cp SKILL.md ~/.openclaw/workspace/skills/life-state/SKILL.md && systemctl --user restart openclaw-gateway.service && echo '✓ SKILL.md synced + gateway restarted'"
+    "openclaw:sync": "cp SKILL.md ~/.openclaw/workspace/skills/life-state/SKILL.md && systemctl --user restart openclaw-gateway.service && echo '\u2713 SKILL.md synced + gateway restarted'",
+    "test": "npm run build && node --test tests/*.test.mjs",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "yaml": "^2.7.1"
@@ -30,13 +33,22 @@
     "typescript": "^5.8.2"
   },
   "keywords": [
-    "lifekit",
-    "state",
     "mood",
     "energy",
     "sleep",
+    "state",
     "cli",
     "agent",
-    "openclaw"
-  ]
+    "openclaw",
+    "local-first"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dsdevq/lifekit-health.git",
+    "directory": "life-state"
+  },
+  "homepage": "https://github.com/dsdevq/lifekit-health/tree/main/life-state#readme",
+  "bugs": {
+    "url": "https://github.com/dsdevq/lifekit-health/issues"
+  }
 }
