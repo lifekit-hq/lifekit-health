@@ -44,11 +44,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dsdevq/lifekit-health.git",
+    "url": "git+https://github.com/lifekit-hq/lifekit-health.git",
     "directory": "workout"
   },
-  "homepage": "https://github.com/dsdevq/lifekit-health/tree/main/workout#readme",
+  "homepage": "https://github.com/lifekit-hq/lifekit-health/tree/main/workout#readme",
   "bugs": {
-    "url": "https://github.com/dsdevq/lifekit-health/issues"
+    "url": "https://github.com/lifekit-hq/lifekit-health/issues"
   }
 }

@@ -44,11 +44,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dsdevq/lifekit-health.git",
+    "url": "git+https://github.com/lifekit-hq/lifekit-health.git",
     "directory": "life-state"
   },
-  "homepage": "https://github.com/dsdevq/lifekit-health/tree/main/life-state#readme",
+  "homepage": "https://github.com/lifekit-hq/lifekit-health/tree/main/life-state#readme",
   "bugs": {
-    "url": "https://github.com/dsdevq/lifekit-health/issues"
+    "url": "https://github.com/lifekit-hq/lifekit-health/issues"
   }
 }

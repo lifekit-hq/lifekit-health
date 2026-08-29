@@ -4,14 +4,14 @@
   "description": "Local-first nutrition tracking CLI for agents and humans",
   "license": "MIT",
   "author": "Peter 'Pita' Martischka <petermartischka@gmail.com>",
-  "homepage": "https://github.com/dsdevq/lifekit-health/tree/main/nutrition#readme",
+  "homepage": "https://github.com/lifekit-hq/lifekit-health/tree/main/nutrition#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dsdevq/lifekit-health.git",
+    "url": "git+https://github.com/lifekit-hq/lifekit-health.git",
     "directory": "nutrition"
   },
   "bugs": {
-    "url": "https://github.com/dsdevq/lifekit-health/issues"
+    "url": "https://github.com/lifekit-hq/lifekit-health/issues"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
