@@ -33,3 +33,5 @@ jobs:
         working-directory: nutrition
       - run: npm run build
         working-directory: nutrition
+      - run: npm test
+        working-directory: nutrition
