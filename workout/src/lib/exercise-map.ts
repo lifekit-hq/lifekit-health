@@ -7,8 +7,11 @@ import type { MuscleGroup } from './types.js';
  * the session-level muscle_group boundary.
  *
  * Match is substring-based on a normalized form (lowercase, dashes/spaces/
- * underscores stripped). The longest matching keyword wins (so 'legcurl' beats
- * 'curl'); list order only breaks ties between equally long keywords.
+ * underscores stripped). The longest matching movement keyword wins (so 'legcurl'
+ * beats 'curl'); list order only breaks ties between equally long keywords.
+ * Bench/incline-style modifiers describe position, not movement, so they only
+ * decide the group when no movement keyword matches ('incline-db-curl' is arms,
+ * 'incline-db' alone is chest).
  */
 const KEYWORDS: Array<[string[], MuscleGroup]> = [
   // CORE
@@ -17,11 +20,8 @@ const KEYWORDS: Array<[string[], MuscleGroup]> = [
   // Note: 'dip' lives in CHEST below — parallel-bar dips emphasize chest as prime mover.
   //       'tricep-dip' / 'bench-dip' still resolve to arms via the 'tricep' / 'benchdip' keyword
   //       because those are longer than 'dip'.
-  //       Incline/decline modifiers are longer chest keywords, so the arm variants are listed explicitly.
   [['curl', 'preacher', 'hammercurl', 'bicep', 'spidercurl',
-    'triceps', 'tricep', 'skullcrusher', 'pushdown', 'overheadextension', 'kickback', 'benchdip',
-    'inclinecurl', 'inclinedbcurl', 'inclinedumbbellcurl', 'inclinebenchcurl',
-    'inclinedbtricep', 'inclinedumbbelltricep', 'inclinebenchtricep', 'declinebenchtricep'], 'arms'],
+    'triceps', 'tricep', 'skullcrusher', 'pushdown', 'overheadextension', 'kickback', 'benchdip'], 'arms'],
   // SHOULDERS
   [['ohp', 'overheadpress', 'militarypress', 'shoulderpress', 'lateralraise', 'latraise',
     'sideraise', 'frontraise', 'reardelt', 'reversefly', 'reverseflye', 'uprightrow', 'arnoldpress'], 'shoulders'],
@@ -31,8 +31,7 @@ const KEYWORDS: Array<[string[], MuscleGroup]> = [
   // CHEST
   // 'barbellpress'/'bbpress' cover flat barbell press logged without the word
   // "bench" — a bare 'press' keyword would misroute legpress/shoulderpress.
-  [['bench', 'benchpress', 'inclinebench', 'declinebench', 'inclinedb', 'inclinedumbbell',
-    'dbpress', 'dumbbellpress', 'chestpress', 'barbellpress', 'bbpress',
+  [['benchpress', 'dbpress', 'dumbbellpress', 'chestpress', 'barbellpress', 'bbpress',
     'pushup', 'fly', 'flye', 'flies', 'pecdeck', 'cablefly', 'dip'], 'chest'],
   // LEGS
   [['squat', 'legpress', 'hacksquat', 'lunge', 'legcurl', 'legextension', 'calf', 'calves',
@@ -41,6 +40,8 @@ const KEYWORDS: Array<[string[], MuscleGroup]> = [
   [['run', 'running', 'sprint', 'jog', 'bike', 'cycling', 'cycle', 'rowmachine', 'rowing',
     'treadmill', 'elliptical', 'walk', 'inclinewalk'], 'cardio'],
 ];
+
+const CHEST_MODIFIERS = ['bench', 'inclinedb', 'inclinedumbbell'];
 
 function normalize(s: string): string {
   return s.toLowerCase().replace(/[-_\s]/g, '');
@@ -58,5 +59,6 @@ export function inferMuscleFromName(name: string): MuscleGroup {
       }
     }
   }
+  if (bestLen === 0 && CHEST_MODIFIERS.some(kw => n.includes(kw))) return 'chest';
   return best;
 }

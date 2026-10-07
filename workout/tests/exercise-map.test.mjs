@@ -44,6 +44,9 @@ const PROBES = [
   ['walking-lunge', 'legs'], ['rowing', 'cardio'], ['reverse-fly', 'shoulders'], ['cable-fly', 'chest'],
   ['incline-db-curl', 'arms'], ['incline-dumbbell-curl', 'arms'], ['incline-bench-curl', 'arms'],
   ['decline-bench-tricep-extension', 'arms'], ['incline-bench-tricep-extension', 'arms'],
+  ['incline-db-row', 'back'], ['incline-db-shrug', 'back'], ['incline-bench-row', 'back'], ['dumbbell-bench-row', 'back'],
+  ['incline-db-rear-delt-fly', 'shoulders'],
+  ['bench', 'chest'], ['incline-bench', 'chest'], ['incline-db', 'chest'], ['bench-press', 'chest'], ['incline-db-fly', 'chest'],
   ['incline-db-press', 'chest'], ['decline-bench-press', 'chest'],
 ];
 for (const [name, muscle] of PROBES) {
