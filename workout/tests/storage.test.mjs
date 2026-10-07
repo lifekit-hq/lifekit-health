@@ -1,6 +1,6 @@
 import { test, before } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, readdirSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -50,4 +50,16 @@ test('invalid dates never become filenames', () => {
     assert.throws(() => storage.readDayLog(bad), /invalid date/, bad);
     assert.throws(() => storage.writeDayLog(bad, []), /invalid date/, bad);
   }
+});
+
+test('stray non-date .json files are skipped by cross-date listing', () => {
+  rmSync(join(logs, '2026-01-02.json'));
+  storage.writeDayLog('2026-01-05', [{ ...session, id: 'valid' }]);
+  for (const stray of ['today.json', '2026-3-4.json']) writeFileSync(join(logs, stray), '[]');
+  const dates = storage.listLogDates();
+  assert.equal(dates.includes('today'), false);
+  assert.equal(dates.includes('2026-3-4'), false);
+  assert.equal(dates.includes('2026-01-05'), true);
+  assert.equal(storage.findSessionById('valid').date, '2026-01-05');
+  assert.equal(storage.findSessionById('missing'), null);
 });

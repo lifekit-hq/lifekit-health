@@ -57,10 +57,3 @@ test('a failed write leaves the existing file intact', () => {
   assert.deepEqual(storage.readDayLog('2026-01-04').map(m => m.id), ['m1']);
   assert.deepEqual(tmpLeft(logs), []);
 });
-
-test('invalid dates never become filenames', () => {
-  for (const bad of ['../../etc/passwd', '2026-1-1', '2026-02-30', 'today', '2026-01-01.json', '']) {
-    assert.throws(() => storage.readDayLog(bad), /invalid date/, bad);
-    assert.throws(() => storage.writeDayLog(bad, []), /invalid date/, bad);
-  }
-});

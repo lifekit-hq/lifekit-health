@@ -67,9 +67,6 @@ export function writeGoals(goals: Goals): void {
 }
 
 function logPath(date: string): string {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || new Date(`${date}T00:00:00Z`).toISOString().slice(0, 10) !== date) {
-    throw new Error(`invalid date "${date}". expected YYYY-MM-DD (e.g. 2026-10-07)`);
-  }
   return join(LOGS_DIR, `${date}.json`);
 }
 

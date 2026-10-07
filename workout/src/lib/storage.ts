@@ -1,6 +1,6 @@
 import { closeSync, existsSync, fsyncSync, mkdirSync, openSync, readFileSync, readdirSync, renameSync, unlinkSync, writeSync } from 'fs';
 import { dirname, join } from 'path';
-import { assertValidDate } from './dates.js';
+import { assertValidDate, isValidDate } from './dates.js';
 import type { DayLog, Session } from './types.js';
 
 const BASE_DIR = join(process.env.HOME ?? '~', '.workout-claw');
@@ -69,7 +69,8 @@ export function listLogDates(): string[] {
   if (!existsSync(LOGS_DIR)) return [];
   return readdirSync(LOGS_DIR)
     .filter(f => f.endsWith('.json'))
-    .map(f => f.replace('.json', ''))
+    .map(f => f.slice(0, -'.json'.length))
+    .filter(isValidDate)
     .sort();
 }
 
