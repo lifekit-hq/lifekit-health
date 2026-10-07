@@ -42,6 +42,9 @@ const PROBES = [
   ['leg-press', 'legs'], ['hip-thrust', 'legs'], ['calf-raise', 'legs'], ['bulgarian-split-squat', 'legs'],
   ['face-pull', 'back'], ['romanian-deadlift', 'back'], ['chest-supported-row', 'back'], ['lat-pulldown', 'back'],
   ['walking-lunge', 'legs'], ['rowing', 'cardio'], ['reverse-fly', 'shoulders'], ['cable-fly', 'chest'],
+  ['incline-db-curl', 'arms'], ['incline-dumbbell-curl', 'arms'], ['incline-bench-curl', 'arms'],
+  ['decline-bench-tricep-extension', 'arms'], ['incline-bench-tricep-extension', 'arms'],
+  ['incline-db-press', 'chest'], ['decline-bench-press', 'chest'],
 ];
 for (const [name, muscle] of PROBES) {
   test(`probe: ${name} -> ${muscle}`, () => {

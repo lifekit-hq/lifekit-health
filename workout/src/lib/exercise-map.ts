@@ -16,9 +16,12 @@ const KEYWORDS: Array<[string[], MuscleGroup]> = [
   // ARMS — biceps + triceps share 'arms' bucket
   // Note: 'dip' lives in CHEST below — parallel-bar dips emphasize chest as prime mover.
   //       'tricep-dip' / 'bench-dip' still resolve to arms via the 'tricep' / 'benchdip' keyword
-  //       because arms is checked before chest.
+  //       because those are longer than 'dip'.
+  //       Incline/decline modifiers are longer chest keywords, so the arm variants are listed explicitly.
   [['curl', 'preacher', 'hammercurl', 'bicep', 'spidercurl',
-    'triceps', 'tricep', 'skullcrusher', 'pushdown', 'overheadextension', 'kickback', 'benchdip'], 'arms'],
+    'triceps', 'tricep', 'skullcrusher', 'pushdown', 'overheadextension', 'kickback', 'benchdip',
+    'inclinecurl', 'inclinedbcurl', 'inclinedumbbellcurl', 'inclinebenchcurl',
+    'inclinedbtricep', 'inclinedumbbelltricep', 'inclinebenchtricep', 'declinebenchtricep'], 'arms'],
   // SHOULDERS
   [['ohp', 'overheadpress', 'militarypress', 'shoulderpress', 'lateralraise', 'latraise',
     'sideraise', 'frontraise', 'reardelt', 'reversefly', 'reverseflye', 'uprightrow', 'arnoldpress'], 'shoulders'],
