@@ -16,7 +16,7 @@
 - The hardcoded weekday split (Mon=back, Wed=legs, Fri=chest) is removed. The session muscle group is inferred from the exercises, or taken from an optional `~/.workout-claw/config.json` (`{"split":{"mon":"back"}}`). `inferMuscleFromWeekday` is gone.
 
 **Dates**
-- `--date YYYY-MM-DD` on `log` and `summary`; the default is the local date (it was UTC). Anything that is not a real date is rejected before it can become a filename.
+- `--date YYYY-MM-DD` on `log` and `summary`; the default is the local date (it was UTC). Anything that is not a real date is rejected before it can become a filename. Stray non-date `*.json` files in the logs directory are ignored by cross-date commands instead of aborting them.
 
 **Tests**
 - New tests run against a temp `HOME` and never touch real data.

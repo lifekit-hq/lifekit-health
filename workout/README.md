@@ -187,9 +187,9 @@ Shipped:
 - ✅ v0.4.0 — reliability: atomic writes, fail-on-corrupt, flexible input, `--date` validation (see [`CHANGELOG.md`](./CHANGELOG.md))
 
 Backlog (see [`TODO.md`](./TODO.md)):
-- v0.4 — bodyweight-adjusted volume (so `@bw` exercises contribute to total kg lifted)
-- v0.4 — `progress <exercise>` curve (top-N 1RMs over time)
-- v0.4 — RPE per set: `bench 4x10@60r8`
+- next — bodyweight-adjusted volume (so `@bw` exercises contribute to total kg lifted)
+- next — `progress <exercise>` curve (top-N 1RMs over time)
+- next — RPE per set: `bench 4x10@60r8`
 
 ## License
 

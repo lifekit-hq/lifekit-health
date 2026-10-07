@@ -77,7 +77,7 @@ All data is stored locally in `~/.nutrition-claw/`:
   vectors/            # local vector index for semantic search
 ```
 
-Writes are atomic (temp file + rename in the same directory). A data file that is not valid JSON is never treated as empty: commands fail with a `corrupt JSON` error and leave the file untouched, and any `--date` that is not a real `YYYY-MM-DD` is rejected before it can become a filename.
+Writes are atomic (temp file + rename in the same directory). A data file that is not valid JSON is never treated as empty: commands fail with a `corrupt JSON` error and leave the file untouched.
 
 The MiniLM embedding model is downloaded once on first search and cached locally.
 
