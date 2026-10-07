@@ -2,7 +2,8 @@ import { nanoid } from 'nanoid';
 import { getString, type ParsedArgs } from '../lib/args.js';
 import { print, err } from '../lib/format.js';
 import { appendSession } from '../lib/storage.js';
-import { parseExerciseInput, parseCardioInput, parseMuscleGroup, inferMuscleFromWeekday, todayISO, nowHHMM } from '../lib/parse.js';
+import { parseExerciseInput, parseCardioInput, parseMuscleGroup, inferMuscleFromExercises, resolveDate, nowHHMM } from '../lib/parse.js';
+import { muscleFromConfig } from '../lib/config.js';
 import { sessionSummary } from '../lib/analytics.js';
 import type { Session, CardioEntry } from '../lib/types.js';
 
@@ -13,12 +14,15 @@ export function logCommand(positionals: string[], flags: ParsedArgs['flags']): v
     process.exit(1);
   }
 
-  const date = getString(flags, 'date') ?? todayISO();
+  let date: string;
+  try {
+    date = resolveDate(getString(flags, 'date'));
+  } catch (e) {
+    err(String((e as Error).message));
+    process.exit(1);
+  }
   const time = getString(flags, 'time') ?? nowHHMM();
   const muscleFlag = getString(flags, 'muscle');
-  const muscle_group = muscleFlag
-    ? parseMuscleGroup(muscleFlag)
-    : inferMuscleFromWeekday(new Date(date));
 
   let exercises;
   try {
@@ -31,6 +35,11 @@ export function logCommand(positionals: string[], flags: ParsedArgs['flags']): v
   const cardio: CardioEntry[] = [];
   const cardioFlag = getString(flags, 'cardio');
   if (cardioFlag) cardio.push(parseCardioInput(cardioFlag));
+
+  // --muscle flag, then the user's optional config split, then the exercises themselves.
+  const muscle_group = muscleFlag
+    ? parseMuscleGroup(muscleFlag)
+    : muscleFromConfig(date) ?? inferMuscleFromExercises(exercises, cardio.length > 0);
 
   const session: Session = {
     id: nanoid(8),

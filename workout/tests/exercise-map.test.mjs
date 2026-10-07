@@ -35,3 +35,16 @@ test('normalization: case, dashes, underscores, spaces', () => {
 test('unknown exercises fall back to other', () => {
   assert.equal(inferMuscleFromName('zercher-carry'), 'other');
 });
+
+// Probe table from the ecosystem audit (report 4.3): the most specific keyword wins.
+const PROBES = [
+  ['leg-curl', 'legs'], ['curl', 'arms'], ['hammer-curl', 'arms'], ['bicep-curl', 'arms'],
+  ['leg-press', 'legs'], ['hip-thrust', 'legs'], ['calf-raise', 'legs'], ['bulgarian-split-squat', 'legs'],
+  ['face-pull', 'back'], ['romanian-deadlift', 'back'], ['chest-supported-row', 'back'], ['lat-pulldown', 'back'],
+  ['walking-lunge', 'legs'], ['rowing', 'cardio'], ['reverse-fly', 'shoulders'], ['cable-fly', 'chest'],
+];
+for (const [name, muscle] of PROBES) {
+  test(`probe: ${name} -> ${muscle}`, () => {
+    assert.equal(inferMuscleFromName(name), muscle);
+  });
+}

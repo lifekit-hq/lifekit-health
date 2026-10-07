@@ -98,8 +98,10 @@ workout-claw edit <session-id>         # opens session JSON in $EDITOR
 <exercise> <sets>x<reps>@<weight>
 ```
 
-- Multi-word exercise names use dashes: `incline-db-press`, `barbell-row`
+- Multi-word exercise names use dashes (`incline-db-press`) or spaces (`bench press`; stored with dashes)
 - Bodyweight: `pullups 4x10@bw`
+- Unit suffix: `bench 3x8@60kg` or `bench 3x8@135lb` (lb is converted and stored as kg)
+- Uneven sets: `bench 8,8,6@60` (per-set reps, one weight) or `bench 8@60,6@65` (per-set reps and weights)
 - Multiple exercises in one call: comma-separated
 
 Examples:
@@ -114,11 +116,25 @@ workout-claw log "" --cardio "run 5km 24min"     # cardio-only session
 
 | Flag | Meaning |
 |---|---|
-| `--muscle <g>` | back \| legs \| chest \| shoulders \| arms \| core \| cardio (defaults: weekday → muscle if a split is established) |
+| `--muscle <g>` | back \| legs \| chest \| shoulders \| arms \| core \| cardio (default: inferred from the exercises, or from the optional weekday split in `~/.workout-claw/config.json`) |
 | `--cardio "<entry>"` | e.g. `"incline-walk 20min @4.5kmh i6"` — minutes, speed, incline |
 | `--note "<text>"` | free-text annotation |
-| `--date YYYY-MM-DD` | override (default: today) |
+| `--date YYYY-MM-DD` | date to log under (default: today, local time; invalid dates are rejected) |
 | `--time HH:MM` | override (default: now) |
+
+### Optional weekday split
+
+By default the session's muscle group is inferred from the exercises you logged (most sets wins). If you follow a fixed split, create `~/.workout-claw/config.json`:
+
+```json
+{ "split": { "mon": "back", "wed": "legs", "fri": "chest" } }
+```
+
+On those weekdays the configured group is used; `--muscle` always wins. No split ships with the package.
+
+## Data safety
+
+Day files are written to a temp file and renamed into place, so a crash cannot leave a half-written log. A day file that is not valid JSON is never treated as empty: commands fail with a `corrupt JSON` error and leave the file untouched.
 
 ## Data shape
 
@@ -168,6 +184,7 @@ Shipped:
 - ✅ v0.1 — `log`, `history`, `pr`, `summary` (per-day JSON, fitdown input, Epley 1RM)
 - ✅ v0.2 — `last`, `delete`, `edit`
 - ✅ v0.3 — per-exercise muscle tags, `volume` command for cross-day rollups
+- ✅ v0.4.0 — reliability: atomic writes, fail-on-corrupt, flexible input, `--date` validation (see [`CHANGELOG.md`](./CHANGELOG.md))
 
 Backlog (see [`TODO.md`](./TODO.md)):
 - v0.4 — bodyweight-adjusted volume (so `@bw` exercises contribute to total kg lifted)

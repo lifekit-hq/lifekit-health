@@ -64,15 +64,15 @@ workout-claw log "bench 4x10@60, incline-db-press 4x12@20, triceps-pushdown 4x12
 ```
 
 Optional flags:
-- `--muscle <group>` — `back | legs | chest | shoulders | arms | core | full | cardio | other`. If omitted, inferred from weekday (Mon=back, Wed=legs, Fri=chest per `~/.life/domains/health.md`).
+- `--muscle <group>` — `back | legs | chest | shoulders | arms | core | full | cardio | other`. If omitted, inferred from the exercises (most sets wins; a tie is `full`; cardio-only is `cardio`), unless the user has an optional `~/.workout-claw/config.json` weekday split (`{"split":{"mon":"back","wed":"legs"}}`), which then applies on those days.
 - `--cardio "<entry>"` — e.g. `"incline-walk 20min @4.5kmh i6"` (minutes, speed kmh, incline)
 - `--note "<text>"` — free-text note
-- `--date YYYY-MM-DD` — override date
+- `--date YYYY-MM-DD` — date to log under (default: today in local time). Pass it explicitly when the user logs a past session or it is just after midnight. Anything that is not a real date is rejected.
 - `--time HH:MM` — override time
 
 ### Input syntax
 
-`<exercise> <sets>x<reps>@<weight>` per entry, comma-separated for multiple exercises.
+`<exercise> <sets>x<reps>@<weight>` per entry, comma-separated for multiple exercises. Also accepted: a `kg`/`lb` suffix (`bench 3x8@60kg`, lb is stored as kg), spaces in names (`bench press 3x8@60`), and uneven sets: `bench 8,8,6@60` (per-set reps, one weight) or `bench 8@60,6@65` (per-set reps and weights).
 
 - Multi-word exercise names use dashes: `incline-db-press`, `barbell-row`
 - Bodyweight: `pullups 4x10@bw`
@@ -145,7 +145,8 @@ Opens the session JSON in `$EDITOR` (defaults to `vi`). On save: validates JSON,
 ## Notes for the agent
 
 - After logging, relay the YAML summary back to the user in a readable form (don't dump raw YAML)
-- If the user names an exercise that doesn't match the dash-naming convention, normalize before invoking (e.g. "incline DB press" → `incline-db-press`)
-- Session-level `--muscle` is inferred from weekday — only set explicitly if the user names a non-standard split (e.g. arm day on a Tuesday). **Per-exercise muscle tags are inferred automatically** at log time via name lookup (pullups→back, bench→chest, etc.), so no extra input is needed.
+- Exercise names may contain spaces or dashes (stored with dashes), so pass the user's wording through ("incline DB press" → `incline-db-press`)
+- If the CLI reports `corrupt JSON`, stop and tell the user: the file is left untouched, and nothing was logged. Do not retry or recreate it.
+- Session-level `--muscle` is inferred from the exercises — only set explicitly if the user names a split that differs from what was lifted. **Per-exercise muscle tags are inferred automatically** at log time via name lookup (pullups→back, bench→chest, etc.), so no extra input is needed.
 - When user describes cardio separately, use `--cardio` flag. When they describe both lifting + cardio in one breath, use both.
 - For "how much back/chest/leg volume?" questions, prefer **`volume --muscle X`** over `history --muscle X` — volume aggregates per-exercise, history filters per-session.

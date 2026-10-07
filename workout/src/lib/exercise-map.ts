@@ -7,8 +7,8 @@ import type { MuscleGroup } from './types.js';
  * the session-level muscle_group boundary.
  *
  * Match is substring-based on a normalized form (lowercase, dashes/spaces/
- * underscores stripped). First matching keyword wins, so list order matters —
- * more specific muscles checked before general ones.
+ * underscores stripped). The longest matching keyword wins (so 'legcurl' beats
+ * 'curl'); list order only breaks ties between equally long keywords.
  */
 const KEYWORDS: Array<[string[], MuscleGroup]> = [
   // CORE
@@ -45,10 +45,15 @@ function normalize(s: string): string {
 
 export function inferMuscleFromName(name: string): MuscleGroup {
   const n = normalize(name);
+  let best: MuscleGroup = 'other';
+  let bestLen = 0;
   for (const [keywords, muscle] of KEYWORDS) {
     for (const kw of keywords) {
-      if (n.includes(kw)) return muscle;
+      if (kw.length > bestLen && n.includes(kw)) {
+        best = muscle;
+        bestLen = kw.length;
+      }
     }
   }
-  return 'other';
+  return best;
 }

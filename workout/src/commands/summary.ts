@@ -2,10 +2,10 @@ import { getString, type ParsedArgs } from '../lib/args.js';
 import { print } from '../lib/format.js';
 import { readDayLog } from '../lib/storage.js';
 import { sessionSummary, exerciseTotals } from '../lib/analytics.js';
-import { todayISO, withInferredMuscle } from '../lib/parse.js';
+import { resolveDate, withInferredMuscle } from '../lib/parse.js';
 
 export function summaryCommand(flags: ParsedArgs['flags']): void {
-  const date = getString(flags, 'date') ?? todayISO();
+  const date = resolveDate(getString(flags, 'date'));
   const log = readDayLog(date);
 
   if (log.length === 0) {

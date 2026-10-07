@@ -12,10 +12,11 @@ COMMANDS
 
   log <exercises>                   Log a workout session
     --muscle <group>                back | legs | chest | shoulders | arms | core | full | cardio | other
-                                    (inferred from weekday if omitted: Mon=back, Wed=legs, Fri=chest)
+                                    (inferred from the exercises if omitted; or from the
+                                    optional ~/.workout-claw/config.json weekday split)
     --cardio "<entry>"              Optional cardio: e.g. "incline-walk 20min @4.5kmh i6"
     --note "<text>"                 Free-text note
-    --date YYYY-MM-DD               Override date (default: today)
+    --date YYYY-MM-DD               Date to log under (default: today, local time)
     --time HH:MM                    Override time (default: now)
 
   history                           List recent sessions
@@ -30,7 +31,7 @@ COMMANDS
     --weeks <n>                     How many weeks back (default: 4)
 
   summary                           Today's logged sessions
-    --date YYYY-MM-DD               Override date (default: today)
+    --date YYYY-MM-DD               Date to show (default: today, local time)
 
   last                              Most recent session across all dates
 
@@ -47,7 +48,10 @@ PER-EXERCISE MUSCLE TAGGING (v0.3)
 INPUT FORMAT (log)
   <exercise> <sets>x<reps>@<weight>      e.g. "bench 4x10@60"
   <exercise> <sets>x<reps>@bw            bodyweight (e.g. "pullups 4x10@bw")
-  Multi-word names use dashes:           "incline-db-press 4x12@20"
+  <exercise> <sets>x<reps>@<weight>kg|lb optional unit; lb is stored as kg ("bench 3x8@135lb")
+  <exercise> 8,8,6@60                    per-set reps, one weight
+  <exercise> 8@60,6@65                   per-set reps and weights
+  Names may use dashes or spaces:        "incline-db-press 4x12@20" / "bench press 3x8@60"
   Multiple exercises: comma-separated.   "bench 4x10@60, incline-db 4x12@20"
 
 OUTPUT   YAML on stdout, errors on stderr
