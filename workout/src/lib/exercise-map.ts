@@ -7,8 +7,11 @@ import type { MuscleGroup } from './types.js';
  * the session-level muscle_group boundary.
  *
  * Match is substring-based on a normalized form (lowercase, dashes/spaces/
- * underscores stripped). First matching keyword wins, so list order matters —
- * more specific muscles checked before general ones.
+ * underscores stripped). The longest matching movement keyword wins (so 'legcurl'
+ * beats 'curl'); list order only breaks ties between equally long keywords.
+ * Bench/incline-style modifiers describe position, not movement, so they only
+ * decide the group when no movement keyword matches ('incline-db-curl' is arms,
+ * 'incline-db' alone is chest).
  */
 const KEYWORDS: Array<[string[], MuscleGroup]> = [
   // CORE
@@ -16,7 +19,7 @@ const KEYWORDS: Array<[string[], MuscleGroup]> = [
   // ARMS — biceps + triceps share 'arms' bucket
   // Note: 'dip' lives in CHEST below — parallel-bar dips emphasize chest as prime mover.
   //       'tricep-dip' / 'bench-dip' still resolve to arms via the 'tricep' / 'benchdip' keyword
-  //       because arms is checked before chest.
+  //       because those are longer than 'dip'.
   [['curl', 'preacher', 'hammercurl', 'bicep', 'spidercurl',
     'triceps', 'tricep', 'skullcrusher', 'pushdown', 'overheadextension', 'kickback', 'benchdip'], 'arms'],
   // SHOULDERS
@@ -28,8 +31,7 @@ const KEYWORDS: Array<[string[], MuscleGroup]> = [
   // CHEST
   // 'barbellpress'/'bbpress' cover flat barbell press logged without the word
   // "bench" — a bare 'press' keyword would misroute legpress/shoulderpress.
-  [['bench', 'benchpress', 'inclinebench', 'declinebench', 'inclinedb', 'inclinedumbbell',
-    'dbpress', 'dumbbellpress', 'chestpress', 'barbellpress', 'bbpress',
+  [['benchpress', 'dbpress', 'dumbbellpress', 'chestpress', 'barbellpress', 'bbpress',
     'pushup', 'fly', 'flye', 'flies', 'pecdeck', 'cablefly', 'dip'], 'chest'],
   // LEGS
   [['squat', 'legpress', 'hacksquat', 'lunge', 'legcurl', 'legextension', 'calf', 'calves',
@@ -39,16 +41,24 @@ const KEYWORDS: Array<[string[], MuscleGroup]> = [
     'treadmill', 'elliptical', 'walk', 'inclinewalk'], 'cardio'],
 ];
 
+const CHEST_MODIFIERS = ['bench', 'inclinedb', 'inclinedumbbell'];
+
 function normalize(s: string): string {
   return s.toLowerCase().replace(/[-_\s]/g, '');
 }
 
 export function inferMuscleFromName(name: string): MuscleGroup {
   const n = normalize(name);
+  let best: MuscleGroup = 'other';
+  let bestLen = 0;
   for (const [keywords, muscle] of KEYWORDS) {
     for (const kw of keywords) {
-      if (n.includes(kw)) return muscle;
+      if (kw.length > bestLen && n.includes(kw)) {
+        best = muscle;
+        bestLen = kw.length;
+      }
     }
   }
-  return 'other';
+  if (bestLen === 0 && CHEST_MODIFIERS.some(kw => n.includes(kw))) return 'chest';
+  return best;
 }

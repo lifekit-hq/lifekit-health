@@ -1,6 +1,6 @@
 {
   "name": "workout-claw",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Local-first gym workout tracker CLI for agents and humans. Plain-JSON storage, PR/volume analytics, muscle-group inference.",
   "license": "MIT",
   "author": "Denys Sychov",

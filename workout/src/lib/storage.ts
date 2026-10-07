@@ -1,5 +1,6 @@
-import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { closeSync, existsSync, fsyncSync, mkdirSync, openSync, readFileSync, readdirSync, renameSync, unlinkSync, writeSync } from 'fs';
+import { dirname, join } from 'path';
+import { assertValidDate, isValidDate } from './dates.js';
 import type { DayLog, Session } from './types.js';
 
 const BASE_DIR = join(process.env.HOME ?? '~', '.workout-claw');
@@ -13,18 +14,40 @@ export function ensureDirs(): void {
 
 function readJson<T>(path: string, fallback: T): T {
   if (!existsSync(path)) return fallback;
+  const raw = readFileSync(path, 'utf8');
   try {
-    return JSON.parse(readFileSync(path, 'utf8')) as T;
-  } catch {
-    return fallback;
+    return JSON.parse(raw) as T;
+  } catch (e) {
+    throw new Error(
+      `corrupt JSON in ${path} (${(e as Error).message}). Refusing to treat it as empty - ` +
+      'that would overwrite your data on the next write. Repair or move the file aside, then retry.',
+    );
   }
 }
 
+/** Write to a temp file in the same directory, fsync, then rename over the target. */
 function writeJson(path: string, data: unknown): void {
-  writeFileSync(path, JSON.stringify(data, null, 2) + '\n');
+  const tmp = join(dirname(path), `.${process.pid}.${Date.now()}.tmp`);
+  const fd = openSync(tmp, 'w');
+  try {
+    writeSync(fd, JSON.stringify(data, null, 2) + '\n');
+    fsyncSync(fd);
+  } catch (e) {
+    closeSync(fd);
+    try { unlinkSync(tmp); } catch { /* best effort */ }
+    throw e;
+  }
+  closeSync(fd);
+  try {
+    renameSync(tmp, path);
+  } catch (e) {
+    try { unlinkSync(tmp); } catch { /* best effort */ }
+    throw e;
+  }
 }
 
-function logPath(date: string): string {
+export function logPath(date: string): string {
+  assertValidDate(date);
   return join(LOGS_DIR, `${date}.json`);
 }
 
@@ -46,7 +69,8 @@ export function listLogDates(): string[] {
   if (!existsSync(LOGS_DIR)) return [];
   return readdirSync(LOGS_DIR)
     .filter(f => f.endsWith('.json'))
-    .map(f => f.replace('.json', ''))
+    .map(f => f.slice(0, -'.json'.length))
+    .filter(isValidDate)
     .sort();
 }
 

@@ -14,7 +14,7 @@
 - [x] `history --muscle X` now matches sessions where ANY exercise hits the target muscle, not just session-level focus.
 - [x] `log` / `summary` / `last` output surfaces muscle per exercise.
 
-## v0.4 — quality-of-life
+## Next — quality-of-life
 
 - [ ] Bodyweight-adjusted volume for `@bw` sets (use `health.md` weight, optionally minus assistance). Right now pullups contribute 0 kg to volume which understates load.
 - [ ] `workout-claw progress <exercise>` — top-N estimated 1RMs over time, not just the single best.

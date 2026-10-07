@@ -77,13 +77,15 @@ All data is stored locally in `~/.nutrition-claw/`:
   vectors/            # local vector index for semantic search
 ```
 
+Writes are atomic (temp file + rename in the same directory). A data file that is not valid JSON is never treated as empty: commands fail with a `corrupt JSON` error and leave the file untouched.
+
 The MiniLM embedding model is downloaded once on first search and cached locally.
 
 ## Requirements
 
 - Node.js ≥ 18
 
-> **Contributing / building from source:** [Bun](https://bun.sh) ≥ 1.0 is used to compile the TypeScript source (`npm run build`). It is not needed to run the installed package.
+> **Contributing / building from source:** [Bun](https://bun.sh) ≥ 1.0 is used to compile the TypeScript source (`npm run build`; `npm test` needs Node ≥ 22.18). It is not needed to run the installed package.
 
 ## License
 

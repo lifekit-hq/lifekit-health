@@ -1,5 +1,5 @@
-import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { closeSync, existsSync, fsyncSync, mkdirSync, openSync, readFileSync, readdirSync, renameSync, unlinkSync, writeSync } from 'fs';
+import { dirname, join } from 'path';
 import type { Goals, DayLog, FoodLibrary, Meal } from './types.ts';
 
 const BASE_DIR = join(process.env.HOME ?? '~', '.nutrition-claw');
@@ -22,15 +22,40 @@ export function ensureDirs(): void {
 
 function readJson<T>(path: string, fallback: T): T {
   if (!existsSync(path)) return fallback;
+  const raw = readFileSync(path, 'utf8');
   try {
-    return JSON.parse(readFileSync(path, 'utf8')) as T;
-  } catch {
-    return fallback;
+    return JSON.parse(raw) as T;
+  } catch (e) {
+    throw new Error(
+      `corrupt JSON in ${path} (${(e as Error).message}). Refusing to treat it as empty - ` +
+      'that would overwrite your data on the next write. Repair or move the file aside, then retry.',
+    );
+  }
+}
+
+/** Write to a temp file in the same directory, fsync, then rename over the target. */
+function writeFileAtomic(path: string, content: string): void {
+  const tmp = join(dirname(path), `.${process.pid}.${Date.now()}.tmp`);
+  const fd = openSync(tmp, 'w');
+  try {
+    writeSync(fd, content);
+    fsyncSync(fd);
+  } catch (e) {
+    closeSync(fd);
+    try { unlinkSync(tmp); } catch { /* best effort */ }
+    throw e;
+  }
+  closeSync(fd);
+  try {
+    renameSync(tmp, path);
+  } catch (e) {
+    try { unlinkSync(tmp); } catch { /* best effort */ }
+    throw e;
   }
 }
 
 function writeJson(path: string, data: unknown): void {
-  writeFileSync(path, JSON.stringify(data, null, 2));
+  writeFileAtomic(path, JSON.stringify(data, null, 2));
 }
 
 export function readGoals(): Goals {
@@ -105,5 +130,5 @@ export function appendEducationLog(foodName: string): void {
   filtered.push(foodName);
   // Keep only the last EDUCATION_MAX_LINES
   const trimmed = filtered.slice(-EDUCATION_MAX_LINES);
-  writeFileSync(EDUCATION_FILE, trimmed.join('\n') + '\n');
+  writeFileAtomic(EDUCATION_FILE, trimmed.join('\n') + '\n');
 }

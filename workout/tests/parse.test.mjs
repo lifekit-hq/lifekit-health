@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseExerciseInput, parseCardioInput, parseMuscleGroup, inferMuscleFromWeekday, withInferredMuscle } from '../dist/lib/parse.js';
+import { parseExerciseInput, parseCardioInput, parseMuscleGroup, inferMuscleFromExercises, withInferredMuscle } from '../dist/lib/parse.js';
 
 test('parses basic exercise notation', () => {
   const [ex] = parseExerciseInput('bench 4x10@60');
@@ -39,11 +39,15 @@ test('parseMuscleGroup accepts valid groups and defaults to other', () => {
   assert.equal(parseMuscleGroup(undefined), 'other');
 });
 
-test('weekday inference: Mon=back, Wed=legs, Fri=chest, else other', () => {
-  assert.equal(inferMuscleFromWeekday(new Date('2026-07-20T12:00:00')), 'back'); // Monday
-  assert.equal(inferMuscleFromWeekday(new Date('2026-07-22T12:00:00')), 'legs');
-  assert.equal(inferMuscleFromWeekday(new Date('2026-07-24T12:00:00')), 'chest');
-  assert.equal(inferMuscleFromWeekday(new Date('2026-07-25T12:00:00')), 'other');
+test('session muscle is inferred from the exercises, not the weekday', () => {
+  const legs = parseExerciseInput('squat 4x5@100, leg-press 3x10@150, leg-curl 3x12@40');
+  assert.equal(inferMuscleFromExercises(legs), 'legs');
+  const mixed = parseExerciseInput('bench 3x8@60, pullups 3x8@bw');
+  assert.equal(inferMuscleFromExercises(mixed), 'full'); // tie between chest and back
+  const majority = parseExerciseInput('bench 4x8@60, pullups 3x8@bw');
+  assert.equal(inferMuscleFromExercises(majority), 'chest');
+  assert.equal(inferMuscleFromExercises([], true), 'cardio');
+  assert.equal(inferMuscleFromExercises(parseExerciseInput('zercher-carry 3x10@40')), 'other');
 });
 
 test('withInferredMuscle enriches v0.2 entries and preserves existing tags', () => {
@@ -62,4 +66,57 @@ test('parses cardio notation', () => {
   const run = parseCardioInput('run 5km 24min');
   assert.equal(run.distance_km, 5);
   assert.equal(run.minutes, 24);
+});
+
+const sets = (input) => parseExerciseInput(input)[0].sets;
+
+test('accepts spaces in exercise names (normalized to dashes)', () => {
+  const [ex] = parseExerciseInput('Bench Press 3x8@60');
+  assert.equal(ex.name, 'bench-press');
+  assert.equal(ex.sets.length, 3);
+  assert.equal(ex.muscle, 'chest');
+  assert.equal(parseExerciseInput('incline db press 4x12@20')[0].name, 'incline-db-press');
+});
+
+test('accepts kg and lb suffixes (lb stored as kg)', () => {
+  assert.deepEqual(sets('bench 3x8@60kg')[0], { reps: 8, weight_kg: 60 });
+  assert.deepEqual(sets('bench 3x8@60 kg')[0], { reps: 8, weight_kg: 60 });
+  assert.deepEqual(sets('bench 1x5@135lb')[0], { reps: 5, weight_kg: 61.23 });
+  assert.deepEqual(sets('curl 3x10@12.5KG')[0], { reps: 10, weight_kg: 12.5 });
+});
+
+test('per-set reps with one weight: 8,8,6@60', () => {
+  assert.deepEqual(sets('bench 8,8,6@60'), [
+    { reps: 8, weight_kg: 60 }, { reps: 8, weight_kg: 60 }, { reps: 6, weight_kg: 60 },
+  ]);
+});
+
+test('per-set reps and weights: 8@60,6@65', () => {
+  assert.deepEqual(sets('bench 8@60,6@65'), [
+    { reps: 8, weight_kg: 60 }, { reps: 6, weight_kg: 65 },
+  ]);
+  assert.deepEqual(sets('bench 8@60kg, 6@65kg'), [
+    { reps: 8, weight_kg: 60 }, { reps: 6, weight_kg: 65 },
+  ]);
+});
+
+test('per-set lists do not swallow the next exercise', () => {
+  const exs = parseExerciseInput('bench press 8,8,6@60, squat 3x5@100, pullups 8,6@bw');
+  assert.deepEqual(exs.map(e => e.name), ['bench-press', 'squat', 'pullups']);
+  assert.deepEqual(exs.map(e => e.sets.length), [3, 3, 2]);
+  assert.equal(exs[2].sets[0].weight_kg, 'bw');
+});
+
+test('rejects set lists with no weight and other garbage', () => {
+  assert.throws(() => parseExerciseInput('bench 8,8,6'), /could not parse exercise/);
+  assert.throws(() => parseExerciseInput('bench'), /could not parse exercise/);
+  assert.throws(() => parseExerciseInput('8@60'), /could not parse exercise/);
+  assert.throws(() => parseExerciseInput('bench 3x8@60 extra'), /could not parse exercise/);
+  assert.throws(() => parseExerciseInput('bench 999x8@60'), /could not parse exercise/);
+});
+
+test('todayISO uses the local calendar date, not UTC', async () => {
+  const { todayISO } = await import('../dist/lib/dates.js');
+  assert.equal(todayISO(new Date(2026, 5, 1, 0, 30)), '2026-06-01'); // 00:30 local, whatever the zone
+  assert.equal(todayISO(new Date(2026, 11, 31, 23, 59)), '2026-12-31');
 });

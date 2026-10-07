@@ -2,7 +2,7 @@
 name: nutrition-claw
 description: Local CLI for tracking nutrition with JSON data, semantic search, configurable goals, food library, meal logging, impact feedback, and YAML output.
 author: Denys Sychov
-version: 1.1.0
+version: 1.1.1
 triggers:
   - "log meal"
   - "log food"
