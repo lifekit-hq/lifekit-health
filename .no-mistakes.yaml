@@ -1,0 +1,5 @@
+review:
+  path_instructions:
+    - path: "**"
+      instructions: |
+        Block only on what would break: wrong behavior, a broken contract, money or data loss, a security gap, or changed behavior with no test. Do not raise style, naming, wording or cleanup findings. Every finding names file:line, the input that fails and what goes wrong. If nothing blocks, say so plainly.
