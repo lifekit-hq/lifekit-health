@@ -7,7 +7,6 @@ The lifekit **health module**: local-first CLI tools + agent skills for workout,
 | [`workout/`](workout/) | `workout-claw` | gym workout tracker — sessions, PRs, volume-by-muscle | TypeScript |
 | [`nutrition/`](nutrition/) | `@pita/nutrition-claw` | meals, macros, food library with local semantic search (offline ONNX embeddings) | TypeScript |
 | [`life-state/`](life-state/) | `life-state` | daily mood/energy/soreness/sleep capture with merge semantics | TypeScript |
-| [`mcp/`](mcp/) | — | legacy MCP server wrapping the CLIs (superseded by the skills-first model below) | Python |
 
 ## Architecture: CLI + SKILL.md, no daemon
 
